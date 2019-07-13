@@ -9,7 +9,8 @@ def main(newFileNameLabel, dir):
     excludedNumbers = set()
 
     for file in os.listdir(dir):
-        if not os.path.isfile(file):
+        if os.path.isdir(file):
+            print(f'{file:s} is not a file, skipping')
             allFilesNames.remove(file)
         checkName = fileNameRegex.fullmatch(file)
         if checkName is not None:
@@ -20,14 +21,17 @@ def main(newFileNameLabel, dir):
 
     number = 0
     renamedFiles = 0
+
+    absWorkingDir = os.path.abspath(dir)
+    
     for file in allFilesNames:
         while number in excludedNumbers:
             number = number+1
         newName = newFileNameLabel + "-" + str(number) + os.path.splitext(file)[1];
         number = number+1
-        # print("Renaming file: " + file + " to " + newName)
+        print("Renaming file: " + file + " to " + newName)
         renamedFiles = renamedFiles + 1
-        shutil.move(file, newName)
+        shutil.move(os.path.join(absWorkingDir, file), os.path.join(absWorkingDir, newName))
 
     print("%d files were renamed!" % renamedFiles)
 
